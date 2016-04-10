@@ -15,7 +15,7 @@ To integrate for one-time product purchase (Licensing Model _"..."_), follow the
 ### 3. On the next step for "Script Type" choose "PHP", leave other parameters unchanged, click "Create"
 ![Figure p03](https://raw.githubusercontent.com/Labs64/NetLicensingClient-FastSpring/master/images/p03.png)
 
-### 4. Paste content of the file "product_onetime.php" to the opened text field "Script Source Code (PHP)"
+### 4. Paste content of the file "netlicensing-onetime.php" to the opened text field "Script Source Code (PHP)"
 ![Figure p04](https://raw.githubusercontent.com/Labs64/NetLicensingClient-FastSpring/master/images/p04.png)
 
 ### 5. At the top of the script edit "user configuration" section
@@ -27,7 +27,7 @@ To integrate for one-time product purchase (Licensing Model _"..."_), follow the
 
 ## Configure your product within FastSpring (Licensing Model _"Subscription"_)
 
-To integrate for recuring purchase (Licensing Model "Subscription"), follow these steps:
+To integrate for recurring purchase (Licensing Model "Subscription"), follow these steps:
 
 ### 1. Add a new "Fulfillment Action" to the product
 ![Figure s01](https://raw.githubusercontent.com/Labs64/NetLicensingClient-FastSpring/master/images/s01.png)
@@ -38,7 +38,7 @@ To integrate for recuring purchase (Licensing Model "Subscription"), follow thes
 ### 3. On the next step for "Script Type" choose "PHP", leave other parameters unchanged, click "Create"
 ![Figure s03](https://raw.githubusercontent.com/Labs64/NetLicensingClient-FastSpring/master/images/s03.png)
 
-### 4. Paste content of the file "product_subscription.php" to the opened text field "Script Source Code (PHP)"
+### 4. Paste content of the file "netlicensing-subscription.php" to the opened text field "Script Source Code (PHP)"
 ![Figure s04](https://raw.githubusercontent.com/Labs64/NetLicensingClient-FastSpring/master/images/s04.png)
 
 ### 5. At the top of the script edit "user configuration" section
