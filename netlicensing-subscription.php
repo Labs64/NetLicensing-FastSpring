@@ -92,6 +92,7 @@ if (!$licenseeNumber) {
             $licenseeProperties[$property['name']] = $property['value'];
         }
     }
+
     $licenseeNumber = $licenseeProperties['number'];
 }
 
