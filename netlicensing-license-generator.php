@@ -15,23 +15,26 @@
 // NetLicensing Configuration
 //======================================================================
 
-// NetLicensing Connection
-$nlicHost            = 'https://go.netlicensing.io';
-$nlicApiUrl          = '/core/v2/rest/';
-$licenseeResource    = 'licensee';
-$licenseResource     = 'license';
-$nlicUsername        = '';
-$nlicPassword        = '';
-$authorizationHeader = 'Authorization:' . 'Basic ' . base64_encode($nlicUsername . ":" . $nlicPassword);
-$userAgent           = 'NetLicensing/FastSpring ' . PHP_VERSION . ' (http://netlicensing.io)' . '; ' . $_SERVER['HTTP_USER_AGENT'];
-
 // NetLicensing Product Parameters
+$productType           = 'one-time|subscription'; # FastSpring product type; e.g. one-time or subscription
 $productNumber         = '';
 $licenseTemplateNumber = '';
 
+// NetLicensing Connection
+$nlicUsername          = '';
+$nlicPassword          = '';
+$nlicHost              = 'https://go.netlicensing.io';
+$nlicApiUrl            = '/core/v2/rest/';
+$licenseeResource      = 'licensee';
+$licenseResource       = 'license';
+$authorizationHeader   = 'Authorization:' . 'Basic ' . base64_encode($nlicUsername . ":" . $nlicPassword);
+$userAgent             = 'NetLicensing/FastSpring ' . PHP_VERSION . ' (http://netlicensing.io)' . '; ' . $_SERVER['HTTP_USER_AGENT'];
+
 // Headers regex
-$patternHeader  = '#HTTP/\d\.\d.*?$.*?\r\n\r\n#ims';
-$patternVersion = '#HTTP/(\d\.\d)\s(\d\d\d)\s(.*)#';
+$patternHeader         = '#HTTP/\d\.\d.*?$.*?\r\n\r\n#ims';
+$patternVersion        = '#HTTP/(\d\.\d)\s(\d\d\d)\s(.*)#';
+
+$verbose               = true;
 
 //======================================================================
 // Create Licensee
@@ -75,11 +78,11 @@ if (!$licenseeNumber) {
 
     try {
         if ($licenseeStatusCode != '200') {
-            throw new Exception($licenseeStatus);
+            throw new Exception($licenseeStatus . ($verbose ? PHP_EOL . $licenseeResponse : ''));
         }
     }
     catch (Exception $e) {
-        print $e->getMessage();
+        print "LicenseeService: " . $e->getMessage() . PHP_EOL;
     }
 
     $licenseeProperties = array();
@@ -105,6 +108,13 @@ $licenseParams = array(
     'licenseTemplateNumber' => $licenseTemplateNumber,
     'active' => 'true'
 );
+switch ($productType) {
+    case "one-time":
+        break;
+    case "subscription":
+        $licenseParams['startDate'] = 'now';
+        break;
+}
 
 $licenseCurl = curl_init();
 curl_setopt($licenseCurl, CURLOPT_POST, true);
@@ -136,11 +146,11 @@ $licenseStatus     = $matches[2] . ' ' . $matches[3];
 
 try {
     if ($licenseStatusCode != '200') {
-        throw new Exception($licenseStatus);
+        throw new Exception($licenseStatus . ($verbose ? PHP_EOL . $licenseResponse : ''));
     }
 }
 catch (Exception $e) {
-    print $e->getMessage();
+    print "LicenseService: " . $e->getMessage() . PHP_EOL;
 }
 
 print $licenseeNumber;
