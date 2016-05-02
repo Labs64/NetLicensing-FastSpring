@@ -15,6 +15,8 @@
 // NetLicensing Configuration
 //======================================================================
 
+$verbose               = false;
+
 // NetLicensing Product Parameters
 $productType           = 'one-time|subscription'; # FastSpring product type; e.g. one-time or subscription
 $productNumber         = '';
@@ -34,18 +36,24 @@ $userAgent             = 'NetLicensing/FastSpring ' . PHP_VERSION . ' (http://ne
 $patternHeader         = '#HTTP/\d\.\d.*?$.*?\r\n\r\n#ims';
 $patternVersion        = '#HTTP/(\d\.\d)\s(\d\d\d)\s(.*)#';
 
-$verbose               = true;
-
 //======================================================================
 // Create Licensee
 //======================================================================
 
 // Licensee Number
 $licenseeNumber = !empty($referrer) ? trim($referrer) : null;
+
 if (!$licenseeNumber) {
+
+    // Prepare FastSpring variables
+    $name = !empty($name) ? trim($name) : null;
+    $email = !empty($email) ? trim($email) : null;
+
     $licenseeParams = array(
+        'active' => 'true',
         'productNumber' => $productNumber,
-        'active' => 'true'
+        // 'name' => $name,
+        'email' => $email
     );
 
     $licenseeCurl = curl_init();
@@ -76,13 +84,10 @@ if (!$licenseeNumber) {
     $licenseeStatusCode = $matches[2];
     $licenseeStatus     = $matches[2] . ' ' . $matches[3];
 
-    try {
-        if ($licenseeStatusCode != '200') {
-            throw new Exception($licenseeStatus . ($verbose ? PHP_EOL . $licenseeResponse : ''));
-        }
-    }
-    catch (Exception $e) {
-        print "LicenseeService: " . $e->getMessage() . PHP_EOL;
+    if ($licenseeStatusCode != '200' && $verbose) {
+        echo "LicenseeService error: " . $licenseeStatus . PHP_EOL;
+        echo "LicenseeService payload: " . $licenseeBody . PHP_EOL;
+        // echo "LicenseeService response: " . $licenseeResponse . PHP_EOL;
     }
 
     $licenseeProperties = array();
@@ -103,54 +108,62 @@ if (!$licenseeNumber) {
 // Create License
 //======================================================================
 
-$licenseParams = array(
-    'licenseeNumber' => $licenseeNumber,
-    'licenseTemplateNumber' => $licenseTemplateNumber,
-    'active' => 'true'
-);
-switch ($productType) {
-    case "one-time":
-        break;
-    case "subscription":
-        $licenseParams['startDate'] = 'now';
-        break;
-}
+if ($licenseeNumber) {
 
-$licenseCurl = curl_init();
-curl_setopt($licenseCurl, CURLOPT_POST, true);
-curl_setopt($licenseCurl, CURLOPT_URL, $nlicHost . $nlicApiUrl . $licenseResource);
-curl_setopt($licenseCurl, CURLOPT_POSTFIELDS, http_build_query($licenseParams, '', '&'));
-curl_setopt($licenseCurl, CURLOPT_HTTPHEADER, array(
-    $authorizationHeader,
-    'Accept:application/json'
-));
-curl_setopt($licenseCurl, CURLOPT_HEADER, true);
-curl_setopt($licenseCurl, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($licenseCurl, CURLOPT_USERAGENT, $userAgent);
-$licenseResponse = curl_exec($licenseCurl);
-curl_close($licenseCurl);
+    // Prepare FastSpring variables
+    $product = !empty($product) ? trim($product) : null;
+    $reference = !empty($reference) ? trim($reference) : null;
+    $subscriptionReference = !empty($subscriptionReference) ? trim($subscriptionReference) : null;
 
-// Extract headers from response
-preg_match_all($patternHeader, $licenseResponse, $matches);
-$licenseHeadersString = array_pop($matches[0]);
-$licenseHeaders       = explode("\r\n", str_replace("\r\n\r\n", '', $licenseHeadersString));
-
-// Remove headers from the response body
-$licenseBody = str_replace($licenseHeadersString, '', $licenseResponse);
-
-// Extract the version and status from the first header
-$licenseVersionAndStatus = array_shift($licenseHeaders);
-preg_match($patternVersion, $licenseVersionAndStatus, $matches);
-$licenseStatusCode = $matches[2];
-$licenseStatus     = $matches[2] . ' ' . $matches[3];
-
-try {
-    if ($licenseStatusCode != '200') {
-        throw new Exception($licenseStatus . ($verbose ? PHP_EOL . $licenseResponse : ''));
+    $licenseParams = array(
+        'active' => 'true',
+        'licenseeNumber' => $licenseeNumber,
+        'licenseTemplateNumber' => $licenseTemplateNumber,
+        'FastSpringProduct' => $product,
+    );
+    switch ($productType) {
+        case "one-time":
+            $licenseParams['FastSpringReference'] = $reference;
+            break;
+        case "subscription":
+            $licenseParams['startDate'] = 'now';
+            $licenseParams['FastSpringSubscriptionReference'] = $subscriptionReference;
+            break;
     }
-}
-catch (Exception $e) {
-    print "LicenseService: " . $e->getMessage() . PHP_EOL;
+
+    $licenseCurl = curl_init();
+    curl_setopt($licenseCurl, CURLOPT_POST, true);
+    curl_setopt($licenseCurl, CURLOPT_URL, $nlicHost . $nlicApiUrl . $licenseResource);
+    curl_setopt($licenseCurl, CURLOPT_POSTFIELDS, http_build_query($licenseParams, '', '&'));
+    curl_setopt($licenseCurl, CURLOPT_HTTPHEADER, array(
+        $authorizationHeader,
+        'Accept:application/json'
+    ));
+    curl_setopt($licenseCurl, CURLOPT_HEADER, true);
+    curl_setopt($licenseCurl, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($licenseCurl, CURLOPT_USERAGENT, $userAgent);
+    $licenseResponse = curl_exec($licenseCurl);
+    curl_close($licenseCurl);
+
+    // Extract headers from response
+    preg_match_all($patternHeader, $licenseResponse, $matches);
+    $licenseHeadersString = array_pop($matches[0]);
+    $licenseHeaders       = explode("\r\n", str_replace("\r\n\r\n", '', $licenseHeadersString));
+
+    // Remove headers from the response body
+    $licenseBody = str_replace($licenseHeadersString, '', $licenseResponse);
+
+    // Extract the version and status from the first header
+    $licenseVersionAndStatus = array_shift($licenseHeaders);
+    preg_match($patternVersion, $licenseVersionAndStatus, $matches);
+    $licenseStatusCode = $matches[2];
+    $licenseStatus     = $matches[2] . ' ' . $matches[3];
+
+    if ($licenseStatusCode != '200' && $verbose) {
+        echo "LicenseService error: " . $licenseStatus . PHP_EOL;
+        echo "LicenseService payload: " . $licenseBody . PHP_EOL;
+        // echo "LicenseService response: " . $licenseResponse . PHP_EOL;
+    }
 }
 
 print $licenseeNumber;
