@@ -25,10 +25,12 @@ $licenseTemplateNumber = '';
 // NetLicensing Connection
 $nlicUsername          = '';
 $nlicPassword          = '';
+
 $nlicHost              = 'https://go.netlicensing.io';
 $nlicApiUrl            = '/core/v2/rest/';
 $licenseeResource      = 'licensee';
 $licenseResource       = 'license';
+
 $authorizationHeader   = 'Authorization:' . 'Basic ' . base64_encode($nlicUsername . ":" . $nlicPassword);
 $userAgent             = 'NetLicensing/FastSpring ' . PHP_VERSION . ' (http://netlicensing.io)' . '; ' . $_SERVER['HTTP_USER_AGENT'];
 
@@ -62,7 +64,8 @@ if (!$licenseeNumber) {
     curl_setopt($licenseeCurl, CURLOPT_POSTFIELDS, http_build_query($licenseeParams, '', '&'));
     curl_setopt($licenseeCurl, CURLOPT_HTTPHEADER, array(
         $authorizationHeader,
-        'Accept:application/json'
+        'Content-Type: application/x-www-form-urlencoded',
+        'Accept: application/json'
     ));
     curl_setopt($licenseeCurl, CURLOPT_HEADER, true);
     curl_setopt($licenseeCurl, CURLOPT_RETURNTRANSFER, true);
@@ -137,7 +140,8 @@ if ($licenseeNumber) {
     curl_setopt($licenseCurl, CURLOPT_POSTFIELDS, http_build_query($licenseParams, '', '&'));
     curl_setopt($licenseCurl, CURLOPT_HTTPHEADER, array(
         $authorizationHeader,
-        'Accept:application/json'
+        'Content-Type: application/x-www-form-urlencoded',
+        'Accept: application/json'
     ));
     curl_setopt($licenseCurl, CURLOPT_HEADER, true);
     curl_setopt($licenseCurl, CURLOPT_RETURNTRANSFER, true);
