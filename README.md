@@ -15,4 +15,4 @@ See the NetLicensing [RESTful API](https://www.labs64.de/confluence/x/pwCo) for 
 
 ## Bugs and Feedback
 
-For bugs, questions and discussions please use the [Github Issues](https://github.com/Labs64/NetLicensing-FastSpring/issues).
+For bugs, questions and discussions please use the [GitHub Issues](https://github.com/Labs64/NetLicensing-FastSpring/issues).
