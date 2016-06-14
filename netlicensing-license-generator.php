@@ -18,7 +18,7 @@
 $verbose               = false;
 
 // NetLicensing Product Parameters
-$productType           = 'one-time|subscription'; # FastSpring product type; e.g. one-time or subscription
+$productType           = 'one-time|subscription'; # FastSpring product type; e.g. 'one-time' for one-time product or 'subscription' for subscription product/plan
 $productNumber         = '';
 $licenseTemplateNumber = '';
 
