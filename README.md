@@ -11,7 +11,7 @@
 
 See the [Wiki](https://github.com/Labs64/NetLicensing-FastSpring/wiki/) for full documentation, examples, operational details and other information.
 
-See the NetLicensing [RESTful API](https://www.labs64.de/confluence/x/pwCo) for the service API.
+See the NetLicensing [RESTful API](https://netlicensing.io/wiki/restful-api) for the service API.
 
 ## Bugs and Feedback
 
