@@ -1,3 +1,5 @@
+## NOTE: FastSpring (Classic Commerce) integration is deprecated. Please refer to the [NetLicensing integrations](https://netlicensing.io/wiki/integrations) page for new FastSpring (Contextual Commerce) integration
+
 <img src="https://github.com/Labs64/NetLicensing-FastSpring/blob/master/images/netlicensing-fastspring-stage.png">
 
 # Labs64 NetLicensing / FastSpring integration
